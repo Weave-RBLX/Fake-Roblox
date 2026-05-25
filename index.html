@@ -3,18 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Clone - Secure Account</title>
+    <title>RobloxClone - Play Together</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo">🎮 Roblox Clone</div>
+            <div class="logo">🎮 RobloxClone</div>
             <div class="nav-links" id="navLinks">
                 <a href="#" onclick="showSection('home')" class="nav-link">Home</a>
                 <a href="#" onclick="showSection('games')" class="nav-link">Games</a>
-                <a href="#" onclick="showSection('profile')" class="nav-link" id="profileLink" style="display:none;">Profile</a>
+                <a href="#" onclick="showSection('customize')" class="nav-link logged-only" id="customizeLink" style="display:none;">Avatar</a>
+                <a href="#" onclick="showSection('messages')" class="nav-link logged-only" id="messagesLink" style="display:none;">
+                    📬 Messages <span id="unreadBadge" class="badge" style="display:none;"></span>
+                </a>
+                <a href="#" onclick="showSection('profile')" class="nav-link logged-only" id="profileLink" style="display:none;">Profile</a>
                 <button onclick="handleLogout()" id="logoutBtn" class="btn btn-logout" style="display:none;">Logout</button>
                 <button onclick="showSection('login')" id="loginBtn" class="btn btn-primary">Sign In</button>
             </div>
@@ -23,14 +29,22 @@
 
     <!-- Main Content -->
     <main class="container">
+
         <!-- Home Section -->
         <section id="home" class="section active">
             <div class="hero">
-                <h1>Welcome to Roblox Clone</h1>
-                <p>Secure. Safe. Fun.</p>
+                <div class="hero-stars"></div>
+                <h1>Play. Build. <span class="accent">Together.</span></h1>
+                <p>The safe gaming world built for you. No ads. No creeps. Just fun.</p>
                 <div class="button-group">
                     <button onclick="showSection('register')" class="btn btn-primary btn-large">Create Account</button>
                     <button onclick="showSection('login')" class="btn btn-secondary btn-large">Sign In</button>
+                </div>
+                <div class="feature-pills">
+                    <span class="pill">🔒 Safe &amp; Secure</span>
+                    <span class="pill">🌐 Multiplayer</span>
+                    <span class="pill">🎨 Customize</span>
+                    <span class="pill">📬 Messaging</span>
                 </div>
             </div>
         </section>
@@ -58,7 +72,7 @@
         <section id="register" class="section">
             <div class="auth-form">
                 <h2>🆕 Create Account</h2>
-                <p class="info-text">Only one account per device</p>
+                <p class="info-text">One account per device · 2 min cooldown</p>
                 <form onsubmit="handleRegister(event)">
                     <div class="form-group">
                         <label for="regUsername">Username</label>
@@ -87,8 +101,143 @@
         <section id="games" class="section">
             <div class="games-container">
                 <h2>🎮 Available Games</h2>
-                <div class="games-grid" id="gamesGrid">
-                    <!-- Games will be populated here -->
+                <p class="section-sub">Click a game to enter the 3D world</p>
+                <div class="games-grid" id="gamesGrid"></div>
+            </div>
+        </section>
+
+        <!-- 3D Game View -->
+        <section id="gameView" class="section">
+            <div class="game-view-container">
+                <div class="game-hud">
+                    <button onclick="exitGame()" class="btn btn-logout btn-sm">⬅ Exit</button>
+                    <span id="gameTitle" class="game-hud-title"></span>
+                    <span id="playerCount" class="player-count">👥 1 player online</span>
+                </div>
+                <canvas id="gameCanvas"></canvas>
+                <div class="game-chat-overlay">
+                    <div id="gameChatMessages" class="game-chat-messages"></div>
+                    <div class="game-chat-input-row">
+                        <input type="text" id="gameChatInput" placeholder="Chat..." maxlength="80" onkeydown="if(event.key==='Enter') sendGameChat()">
+                        <button onclick="sendGameChat()" class="btn btn-primary btn-sm">Send</button>
+                    </div>
+                </div>
+                <div class="game-controls-hint">WASD / Arrow Keys to move · Space to jump</div>
+            </div>
+        </section>
+
+        <!-- Avatar Customisation Section -->
+        <section id="customize" class="section">
+            <div class="customize-container">
+                <h2>🎨 Customize Your Avatar</h2>
+                <div class="customize-layout">
+                    <!-- Avatar Preview -->
+                    <div class="avatar-preview-panel">
+                        <h3>Your Avatar</h3>
+                        <div class="avatar-display" id="avatarDisplay">
+                            <div class="avatar-figure" id="avatarFigure">
+                                <div class="av-hat" id="avHat"></div>
+                                <div class="av-head" id="avHead">
+                                    <div class="av-face" id="avFace"></div>
+                                </div>
+                                <div class="av-body" id="avBody">
+                                    <div class="av-accessory" id="avAccessory"></div>
+                                </div>
+                                <div class="av-legs">
+                                    <div class="av-leg" id="avLeg"></div>
+                                    <div class="av-leg" id="avLeg2"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="saveAvatar()" class="btn btn-primary btn-full" style="margin-top:1rem;">💾 Save Avatar</button>
+                    </div>
+
+                    <!-- Customisation Options -->
+                    <div class="customize-options">
+
+                        <!-- Skin Color -->
+                        <div class="custom-section">
+                            <h3>🎨 Skin Color</h3>
+                            <div class="color-grid" id="skinColors"></div>
+                        </div>
+
+                        <!-- Hats -->
+                        <div class="custom-section">
+                            <h3>🎩 Hats</h3>
+                            <div class="item-grid" id="hatsGrid"></div>
+                        </div>
+
+                        <!-- Clothes -->
+                        <div class="custom-section">
+                            <h3>👕 Clothes</h3>
+                            <div class="item-grid" id="clothesGrid"></div>
+                        </div>
+
+                        <!-- Accessories -->
+                        <div class="custom-section">
+                            <h3>✨ Accessories</h3>
+                            <div class="item-grid" id="accessoriesGrid"></div>
+                        </div>
+
+                        <!-- Face -->
+                        <div class="custom-section">
+                            <h3>😊 Face</h3>
+                            <div class="item-grid" id="facesGrid"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Messages Section -->
+        <section id="messages" class="section">
+            <div class="messages-container">
+                <h2>📬 Messages</h2>
+                <div class="messages-layout">
+
+                    <!-- Compose Panel -->
+                    <div class="compose-panel">
+                        <h3>✉️ Send a Message</h3>
+                        <div class="form-group">
+                            <label>To (Username)</label>
+                            <input type="text" id="msgTo" placeholder="Enter username...">
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" id="msgSubject" placeholder="What's it about?" maxlength="60">
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea id="msgBody" placeholder="Write your message here..." rows="5" maxlength="500"></textarea>
+                        </div>
+                        <button onclick="sendMessage()" class="btn btn-primary btn-full">📤 Send Message</button>
+                    </div>
+
+                    <!-- Inbox Panel -->
+                    <div class="inbox-panel">
+                        <div class="inbox-tabs">
+                            <button class="tab-btn active" onclick="switchTab('inbox', this)">📥 Inbox</button>
+                            <button class="tab-btn" onclick="switchTab('sent', this)">📤 Sent</button>
+                        </div>
+                        <div id="inboxList" class="message-list"></div>
+                        <div id="sentList" class="message-list" style="display:none;"></div>
+                    </div>
+
+                </div>
+
+                <!-- Message Detail Modal -->
+                <div id="messageModal" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <button onclick="closeMessageModal()" class="modal-close">✕</button>
+                        <div class="modal-header">
+                            <span id="modalFrom" class="modal-from"></span>
+                            <span id="modalDate" class="modal-date"></span>
+                        </div>
+                        <h3 id="modalSubject" class="modal-subject"></h3>
+                        <p id="modalBody" class="modal-body"></p>
+                        <button onclick="replyToMessage()" class="btn btn-primary" style="margin-top:1rem;">↩️ Reply</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -97,6 +246,7 @@
         <section id="profile" class="section">
             <div class="profile-container">
                 <h2>👤 My Profile</h2>
+                <div class="avatar-mini-preview" id="profileAvatarPreview"></div>
                 <div class="profile-info">
                     <div class="profile-item">
                         <label>Username</label>
@@ -116,13 +266,15 @@
                     </div>
                 </div>
                 <div class="profile-actions">
+                    <button onclick="showSection('customize')" class="btn btn-primary">🎨 Edit Avatar</button>
                     <button onclick="handleLogout()" class="btn btn-logout">Logout</button>
                 </div>
             </div>
         </section>
+
     </main>
 
-    <!-- Message Display -->
+    <!-- Toast Message -->
     <div id="message" class="message"></div>
 
     <script src="script.js"></script>
