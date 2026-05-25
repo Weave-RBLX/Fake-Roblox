@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Clone - Home</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🎮 Roblox Clone</div>
+            <div class="nav-links" id="navLinks">
+                <a href="#" onclick="showSection('home')" class="nav-link">Home</a>
+                <a href="#" onclick="showSection('games')" class="nav-link">Games</a>
+                <a href="#" onclick="showSection('profile')" class="nav-link" id="profileLink" style="display:none;">Profile</a>
+                <button onclick="handleLogout()" id="logoutBtn" class="btn btn-logout" style="display:none;">Logout</button>
+                <button onclick="showSection('login')" id="loginBtn" class="btn btn-primary">Sign In</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h1>Welcome to Roblox Clone</h1>
+                <p>Create an account and start playing awesome games!</p>
+                <button onclick="showSection('register')" class="btn btn-primary btn-large">Create Account</button>
+                <button onclick="showSection('login')" class="btn btn-secondary btn-large">Sign In</button>
+            </div>
+        </section>
+
+        <!-- Login Section -->
+        <section id="login" class="section">
+            <div class="auth-form">
+                <h2>Sign In</h2>
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" required placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+                    <p class="auth-link">Don't have an account? <a href="#" onclick="showSection('register')">Create one</a></p>
+                </form>
+            </div>
+        </section>
+
+        <!-- Register Section -->
+        <section id="register" class="section">
+            <div class="auth-form">
+                <h2>Create Account</h2>
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label for="regUsername">Username</label>
+                        <input type="text" id="regUsername" required placeholder="Choose a username" minlength="3">
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email</label>
+                        <input type="email" id="regEmail" required placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" required placeholder="Create password" minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="regConfirmPassword">Confirm Password</label>
+                        <input type="password" id="regConfirmPassword" required placeholder="Confirm password" minlength="6">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+                    <p class="auth-link">Already have an account? <a href="#" onclick="showSection('login')">Sign in</a></p>
+                </form>
+            </div>
+        </section>
+
+        <!-- Games Section -->
+        <section id="games" class="section">
+            <h2>Available Games</h2>
+            <div class="games-grid" id="gamesGrid">
+                <!-- Games will be populated here -->
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="section">
+            <div class="profile-container">
+                <h2>My Profile</h2>
+                <div class="profile-info">
+                    <p><strong>Username:</strong> <span id="profileUsername"></span></p>
+                    <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                    <p><strong>Account Created:</strong> <span id="profileCreated"></span></p>
+                    <p><strong>Member Since:</strong> <span id="profileMemberSince"></span></p>
+                </div>
+                <div class="profile-actions">
+                    <button onclick="downloadUserData()" class="btn btn-secondary">Export Data</button>
+                    <button onclick="handleLogout()" class="btn btn-logout">Logout</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Message Display -->
+    <div id="message" class="message"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
