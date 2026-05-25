@@ -3,280 +3,366 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixelcity - Stop being bored </title>
+    <title>PixelCity — Play. Build. Together.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">🎮 RobloxClone</div>
-            <div class="nav-links" id="navLinks">
-                <a href="#" onclick="showSection('home')" class="nav-link">Home</a>
-                <a href="#" onclick="showSection('games')" class="nav-link">Games</a>
-                <a href="#" onclick="showSection('customize')" class="nav-link logged-only" id="customizeLink" style="display:none;">Avatar</a>
-                <a href="#" onclick="showSection('messages')" class="nav-link logged-only" id="messagesLink" style="display:none;">
-                    📬 Messages <span id="unreadBadge" class="badge" style="display:none;"></span>
-                </a>
-                <a href="#" onclick="showSection('profile')" class="nav-link logged-only" id="profileLink" style="display:none;">Profile</a>
-                <button onclick="handleLogout()" id="logoutBtn" class="btn btn-logout" style="display:none;">Logout</button>
-                <button onclick="showSection('login')" id="loginBtn" class="btn btn-primary">Sign In</button>
+
+<!-- Animated background grid -->
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<!-- Navigation -->
+<nav class="navbar" id="navbar">
+    <div class="nav-inner">
+        <div class="logo" onclick="showSection('home')">
+            <span class="logo-pixel">⬛</span>
+            <span class="logo-text">PIXEL<span class="logo-accent">CITY</span></span>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="#" class="nav-link" onclick="showSection('home')">Home</a>
+            <a href="#" class="nav-link" onclick="showSection('games')">Games</a>
+            <a href="#" class="nav-link logged-only" id="studioLink" style="display:none" onclick="showSection('studio')">Studio</a>
+            <a href="#" class="nav-link logged-only" id="avatarLink" style="display:none" onclick="showSection('customize')">Avatar</a>
+            <a href="#" class="nav-link logged-only" id="friendsLink" style="display:none" onclick="showSection('friends')">
+                Friends <span id="friendReqBadge" class="badge" style="display:none"></span>
+            </a>
+            <a href="#" class="nav-link logged-only" id="messagesLink" style="display:none" onclick="showSection('messages')">
+                Messages <span id="unreadBadge" class="badge" style="display:none"></span>
+            </a>
+            <a href="#" class="nav-link logged-only" id="profileLink" style="display:none" onclick="showSection('profile')">Profile</a>
+            <button class="btn btn-outline" id="loginBtn" onclick="showSection('login')">Sign In</button>
+            <button class="btn btn-primary" id="registerBtn" onclick="showSection('register')">Join Free</button>
+            <button class="btn btn-danger" id="logoutBtn" style="display:none" onclick="handleLogout()">Sign Out</button>
+        </div>
+        <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#" onclick="showSection('home');toggleMobileMenu()">Home</a>
+    <a href="#" onclick="showSection('games');toggleMobileMenu()">Games</a>
+    <a href="#" class="mobile-logged" id="mStudio" style="display:none" onclick="showSection('studio');toggleMobileMenu()">Studio</a>
+    <a href="#" class="mobile-logged" id="mAvatar" style="display:none" onclick="showSection('customize');toggleMobileMenu()">Avatar</a>
+    <a href="#" class="mobile-logged" id="mFriends" style="display:none" onclick="showSection('friends');toggleMobileMenu()">Friends</a>
+    <a href="#" class="mobile-logged" id="mMessages" style="display:none" onclick="showSection('messages');toggleMobileMenu()">Messages</a>
+    <a href="#" class="mobile-logged" id="mProfile" style="display:none" onclick="showSection('profile');toggleMobileMenu()">Profile</a>
+    <button class="btn btn-danger mobile-logged" id="mLogout" style="display:none" onclick="handleLogout();toggleMobileMenu()">Sign Out</button>
+    <button class="btn btn-outline" id="mLogin" onclick="showSection('login');toggleMobileMenu()">Sign In</button>
+    <button class="btn btn-primary" id="mRegister" onclick="showSection('register');toggleMobileMenu()">Join Free</button>
+</div>
+
+<main class="container">
+
+    <!-- ─── HOME ─── -->
+    <section id="home" class="section active">
+        <div class="hero">
+            <div class="hero-badge">🎮 MULTIPLAYER GAMING PLATFORM</div>
+            <h1 class="hero-title">Play. Build.<br><span class="accent-text">Together.</span></h1>
+            <p class="hero-sub">A blocky 3D world where you design games, customize avatars, and play with friends — all in your browser.</p>
+            <div class="hero-cta" id="heroCta">
+                <button class="btn btn-primary btn-xl" onclick="showSection('register')">Create Free Account</button>
+                <button class="btn btn-outline btn-xl" onclick="showSection('login')">Sign In</button>
+            </div>
+            <div class="hero-cta-loggedin" id="heroCtaLoggedIn" style="display:none">
+                <button class="btn btn-primary btn-xl" onclick="showSection('games')">▶ Play Now</button>
+                <button class="btn btn-outline btn-xl" onclick="showSection('studio')">🔨 Open Studio</button>
+            </div>
+            <div class="feature-pills">
+                <span class="pill">🔒 Secure Auth</span>
+                <span class="pill">🌐 Multiplayer</span>
+                <span class="pill">🎨 Avatar Builder</span>
+                <span class="pill">🔨 Game Studio</span>
+                <span class="pill">👥 Friends</span>
+                <span class="pill">📬 Messaging</span>
             </div>
         </div>
-    </nav>
+    </section>
 
-    <!-- Main Content -->
-    <main class="container">
-
-        <!-- Home Section -->
-        <section id="home" class="section active">
-            <div class="hero">
-                <div class="hero-stars"></div>
-                <h1>Play. Build. <span class="accent">Together.</span></h1>
-                <p>The safe gaming world built for you. No ads. No creeps. Just fun.</p>
-                <div class="button-group">
-                    <button onclick="showSection('register')" class="btn btn-primary btn-large">Create Account</button>
-                    <button onclick="showSection('login')" class="btn btn-secondary btn-large">Sign In</button>
+    <!-- ─── LOGIN ─── -->
+    <section id="login" class="section">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-icon">🔐</div>
+                <h2>Welcome back</h2>
+                <p>Sign in to your PixelCity account</p>
+            </div>
+            <form onsubmit="handleLogin(event)" autocomplete="on">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUsername" required placeholder="Your username" autocomplete="username">
                 </div>
-                <div class="feature-pills">
-                    <span class="pill">🔒 Safe &amp; Secure</span>
-                    <span class="pill">🌐 Multiplayer</span>
-                    <span class="pill">🎨 Customize</span>
-                    <span class="pill">📬 Messaging</span>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Your password" autocomplete="current-password">
                 </div>
-            </div>
-        </section>
+                <button type="submit" class="btn btn-primary btn-full">Sign In →</button>
+            </form>
+            <p class="auth-switch">No account? <a href="#" onclick="showSection('register')">Create one free</a></p>
+        </div>
+    </section>
 
-        <!-- Login Section -->
-        <section id="login" class="section">
-            <div class="auth-form">
-                <h2>🔐 Sign In</h2>
-                <form onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="loginUsername">Username</label>
-                        <input type="text" id="loginUsername" required placeholder="Enter your username">
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Password</label>
-                        <input type="password" id="loginPassword" required placeholder="Enter your password">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full">Sign In</button>
-                    <p class="auth-link">Don't have an account? <a href="#" onclick="showSection('register')">Create one</a></p>
-                </form>
+    <!-- ─── REGISTER ─── -->
+    <section id="register" class="section">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-icon">🆕</div>
+                <h2>Join PixelCity</h2>
+                <p>Free forever · 2-min cooldown between accounts</p>
             </div>
-        </section>
-
-        <!-- Register Section -->
-        <section id="register" class="section">
-            <div class="auth-form">
-                <h2>🆕 Create Account</h2>
-                <p class="info-text">One account per device · 2 min cooldown</p>
-                <form onsubmit="handleRegister(event)">
-                    <div class="form-group">
-                        <label for="regUsername">Username</label>
-                        <input type="text" id="regUsername" required placeholder="Choose a username (3+ chars)" minlength="3">
-                    </div>
-                    <div class="form-group">
-                        <label for="regEmail">Email</label>
-                        <input type="email" id="regEmail" required placeholder="your@email.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="regPassword">Password</label>
-                        <input type="password" id="regPassword" required placeholder="Create password (8+ chars)" minlength="8">
-                        <small class="password-hint">🔒 Passwords are encrypted with SHA-256</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="regConfirmPassword">Confirm Password</label>
-                        <input type="password" id="regConfirmPassword" required placeholder="Confirm password" minlength="8">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full">Create Account</button>
-                    <p class="auth-link">Already have an account? <a href="#" onclick="showSection('login')">Sign in</a></p>
-                </form>
-            </div>
-        </section>
-
-        <!-- Games Section -->
-        <section id="games" class="section">
-            <div class="games-container">
-                <h2>🎮 Available Games</h2>
-                <p class="section-sub">Click a game to enter the 3D world</p>
-                <div class="games-grid" id="gamesGrid"></div>
-            </div>
-        </section>
-
-        <!-- 3D Game View -->
-        <section id="gameView" class="section">
-            <div class="game-view-container">
-                <div class="game-hud">
-                    <button onclick="exitGame()" class="btn btn-logout btn-sm">⬅ Exit</button>
-                    <span id="gameTitle" class="game-hud-title"></span>
-                    <span id="playerCount" class="player-count">👥 1 player online</span>
+            <form onsubmit="handleRegister(event)" autocomplete="on">
+                <div class="form-group">
+                    <label>Username <span class="hint">(3+ chars)</span></label>
+                    <input type="text" id="regUsername" required placeholder="Pick a username" minlength="3" autocomplete="username">
                 </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="regEmail" required placeholder="your@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label>Password <span class="hint">(8+ chars)</span></label>
+                    <input type="password" id="regPassword" required placeholder="Create a password" minlength="8" autocomplete="new-password">
+                    <small class="field-note">🔒 Hashed with SHA-256 + salt</small>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="regConfirmPassword" required placeholder="Repeat password" minlength="8" autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Create Account →</button>
+            </form>
+            <p class="auth-switch">Have an account? <a href="#" onclick="showSection('login')">Sign in</a></p>
+        </div>
+    </section>
+
+    <!-- ─── GAMES ─── -->
+    <section id="games" class="section">
+        <div class="section-header">
+            <h2>🎮 Games</h2>
+            <p>Click any game to enter the 3D world</p>
+        </div>
+        <div class="games-grid" id="gamesGrid"></div>
+    </section>
+
+    <!-- ─── GAME VIEW ─── -->
+    <section id="gameView" class="section">
+        <div class="game-view-wrap">
+            <div class="game-hud">
+                <button class="btn btn-sm btn-danger" onclick="exitGame()">✕ Exit</button>
+                <span id="gameTitle" class="game-hud-title"></span>
+                <span id="playerCount" class="player-count-hud">👥 — online</span>
+            </div>
+            <div class="game-canvas-wrap">
                 <canvas id="gameCanvas"></canvas>
-                <div class="game-chat-overlay">
-                    <div id="gameChatMessages" class="game-chat-messages"></div>
-                    <div class="game-chat-input-row">
-                        <input type="text" id="gameChatInput" placeholder="Chat..." maxlength="80" onkeydown="if(event.key==='Enter') sendGameChat()">
-                        <button onclick="sendGameChat()" class="btn btn-primary btn-sm">Send</button>
-                    </div>
-                </div>
-                <div class="game-controls-hint">WASD / Arrow Keys to move · Space to jump</div>
-            </div>
-        </section>
-
-        <!-- Avatar Customisation Section -->
-        <section id="customize" class="section">
-            <div class="customize-container">
-                <h2>🎨 Customize Your Avatar</h2>
-                <div class="customize-layout">
-                    <!-- Avatar Preview -->
-                    <div class="avatar-preview-panel">
-                        <h3>Your Avatar</h3>
-                        <div class="avatar-display" id="avatarDisplay">
-                            <div class="avatar-figure" id="avatarFigure">
-                                <div class="av-hat" id="avHat"></div>
-                                <div class="av-head" id="avHead">
-                                    <div class="av-face" id="avFace"></div>
-                                </div>
-                                <div class="av-body" id="avBody">
-                                    <div class="av-accessory" id="avAccessory"></div>
-                                </div>
-                                <div class="av-legs">
-                                    <div class="av-leg" id="avLeg"></div>
-                                    <div class="av-leg" id="avLeg2"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <button onclick="saveAvatar()" class="btn btn-primary btn-full" style="margin-top:1rem;">💾 Save Avatar</button>
-                    </div>
-
-                    <!-- Customisation Options -->
-                    <div class="customize-options">
-
-                        <!-- Skin Color -->
-                        <div class="custom-section">
-                            <h3>🎨 Skin Color</h3>
-                            <div class="color-grid" id="skinColors"></div>
-                        </div>
-
-                        <!-- Hats -->
-                        <div class="custom-section">
-                            <h3>🎩 Hats</h3>
-                            <div class="item-grid" id="hatsGrid"></div>
-                        </div>
-
-                        <!-- Clothes -->
-                        <div class="custom-section">
-                            <h3>👕 Clothes</h3>
-                            <div class="item-grid" id="clothesGrid"></div>
-                        </div>
-
-                        <!-- Accessories -->
-                        <div class="custom-section">
-                            <h3>✨ Accessories</h3>
-                            <div class="item-grid" id="accessoriesGrid"></div>
-                        </div>
-
-                        <!-- Face -->
-                        <div class="custom-section">
-                            <h3>😊 Face</h3>
-                            <div class="item-grid" id="facesGrid"></div>
-                        </div>
-
+                <div class="game-chat-panel">
+                    <div id="gameChatMessages" class="game-chat-msgs"></div>
+                    <div class="game-chat-row">
+                        <input type="text" id="gameChatInput" placeholder="Say something…" maxlength="80"
+                            onkeydown="if(event.key==='Enter'){event.preventDefault();sendGameChat();}">
+                        <button class="btn btn-sm btn-primary" onclick="sendGameChat()">→</button>
                     </div>
                 </div>
             </div>
-        </section>
+            <div class="controls-bar">WASD / Arrows — Move &nbsp;·&nbsp; Space — Jump &nbsp;·&nbsp; Click canvas to focus</div>
+        </div>
+    </section>
 
-        <!-- Messages Section -->
-        <section id="messages" class="section">
-            <div class="messages-container">
-                <h2>📬 Messages</h2>
-                <div class="messages-layout">
-
-                    <!-- Compose Panel -->
-                    <div class="compose-panel">
-                        <h3>✉️ Send a Message</h3>
-                        <div class="form-group">
-                            <label>To (Username)</label>
-                            <input type="text" id="msgTo" placeholder="Enter username...">
-                        </div>
-                        <div class="form-group">
-                            <label>Subject</label>
-                            <input type="text" id="msgSubject" placeholder="What's it about?" maxlength="60">
-                        </div>
-                        <div class="form-group">
-                            <label>Message</label>
-                            <textarea id="msgBody" placeholder="Write your message here..." rows="5" maxlength="500"></textarea>
-                        </div>
-                        <button onclick="sendMessage()" class="btn btn-primary btn-full">📤 Send Message</button>
-                    </div>
-
-                    <!-- Inbox Panel -->
-                    <div class="inbox-panel">
-                        <div class="inbox-tabs">
-                            <button class="tab-btn active" onclick="switchTab('inbox', this)">📥 Inbox</button>
-                            <button class="tab-btn" onclick="switchTab('sent', this)">📤 Sent</button>
-                        </div>
-                        <div id="inboxList" class="message-list"></div>
-                        <div id="sentList" class="message-list" style="display:none;"></div>
-                    </div>
-
+    <!-- ─── STUDIO ─── -->
+    <section id="studio" class="section">
+        <div class="section-header">
+            <h2>🔨 Game Studio</h2>
+            <p>Design and publish your own 3D worlds</p>
+        </div>
+        <div class="studio-wrap">
+            <div class="studio-sidebar">
+                <h3>Tools</h3>
+                <div class="tool-group">
+                    <button class="tool-btn active" id="toolPlace" onclick="setStudioTool('place')">⬛ Place Block</button>
+                    <button class="tool-btn" id="toolErase" onclick="setStudioTool('erase')">🗑️ Erase Block</button>
+                    <button class="tool-btn" id="toolPaint" onclick="setStudioTool('paint')">🎨 Paint Block</button>
                 </div>
+                <h3 style="margin-top:1.5rem">Block Color</h3>
+                <div class="block-colors" id="studioColors"></div>
+                <h3 style="margin-top:1.5rem">Block Type</h3>
+                <div class="block-types" id="studioBlockTypes"></div>
+                <hr class="studio-sep">
+                <h3>Your Games</h3>
+                <div id="studioGameList" class="studio-game-list"></div>
+                <button class="btn btn-primary btn-full" style="margin-top:1rem" onclick="studioNewGame()">+ New World</button>
+                <button class="btn btn-outline btn-full" style="margin-top:0.5rem" onclick="studioSave()">💾 Save World</button>
+                <button class="btn btn-outline btn-full" style="margin-top:0.5rem" onclick="studioPublish()">🚀 Publish</button>
+            </div>
+            <div class="studio-main">
+                <div class="studio-toolbar">
+                    <input type="text" id="studioWorldName" class="studio-world-name" placeholder="World name…" maxlength="40">
+                    <span class="studio-hint">Left-click: place/erase · Middle-click drag: pan · Scroll: zoom</span>
+                </div>
+                <canvas id="studioCanvas"></canvas>
+            </div>
+        </div>
+    </section>
 
-                <!-- Message Detail Modal -->
-                <div id="messageModal" class="modal" style="display:none;">
-                    <div class="modal-content">
-                        <button onclick="closeMessageModal()" class="modal-close">✕</button>
-                        <div class="modal-header">
-                            <span id="modalFrom" class="modal-from"></span>
-                            <span id="modalDate" class="modal-date"></span>
+    <!-- ─── AVATAR ─── -->
+    <section id="customize" class="section">
+        <div class="section-header">
+            <h2>🎨 Avatar Studio</h2>
+            <p>Build your blocky identity</p>
+        </div>
+        <div class="customize-layout">
+            <div class="av-preview-panel">
+                <div class="av-stage" id="avStage">
+                    <div class="av-root" id="avRoot">
+                        <div class="av-hat-wrap" id="avHatWrap"><div class="av-hat" id="avHat"></div></div>
+                        <div class="av-head" id="avHead">
+                            <div class="av-face" id="avFace">😊</div>
                         </div>
-                        <h3 id="modalSubject" class="modal-subject"></h3>
-                        <p id="modalBody" class="modal-body"></p>
-                        <button onclick="replyToMessage()" class="btn btn-primary" style="margin-top:1rem;">↩️ Reply</button>
+                        <div class="av-torso" id="avTorso">
+                            <div class="av-acc" id="avAcc"></div>
+                        </div>
+                        <div class="av-hips">
+                            <div class="av-leg" id="avLeg1"></div>
+                            <div class="av-leg" id="avLeg2"></div>
+                        </div>
                     </div>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="saveAvatar()" style="margin-top:1rem">💾 Save Avatar</button>
+            </div>
+            <div class="av-options">
+                <div class="av-section">
+                    <h3>🎨 Skin</h3>
+                    <div class="color-grid" id="skinColors"></div>
+                </div>
+                <div class="av-section">
+                    <h3>🎩 Hats</h3>
+                    <div class="item-grid" id="hatsGrid"></div>
+                </div>
+                <div class="av-section">
+                    <h3>👕 Clothes</h3>
+                    <div class="item-grid" id="clothesGrid"></div>
+                </div>
+                <div class="av-section">
+                    <h3>✨ Accessories</h3>
+                    <div class="item-grid" id="accessoriesGrid"></div>
+                </div>
+                <div class="av-section">
+                    <h3>😊 Face</h3>
+                    <div class="item-grid" id="facesGrid"></div>
+                </div>
+                <div class="av-section">
+                    <h3>👖 Pants Color</h3>
+                    <div class="color-grid" id="pantsColors"></div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Profile Section -->
-        <section id="profile" class="section">
-            <div class="profile-container">
-                <h2>👤 My Profile</h2>
-                <div class="avatar-mini-preview" id="profileAvatarPreview"></div>
-                <div class="profile-info">
-                    <div class="profile-item">
-                        <label>Username</label>
-                        <p id="profileUsername"></p>
-                    </div>
-                    <div class="profile-item">
-                        <label>Email</label>
-                        <p id="profileEmail"></p>
-                    </div>
-                    <div class="profile-item">
-                        <label>Account Created</label>
-                        <p id="profileCreated"></p>
-                    </div>
-                    <div class="profile-item">
-                        <label>Member Since</label>
-                        <p id="profileMemberSince"></p>
-                    </div>
+    <!-- ─── FRIENDS ─── -->
+    <section id="friends" class="section">
+        <div class="section-header">
+            <h2>👥 Friends</h2>
+            <p>Connect with other players</p>
+        </div>
+        <div class="friends-layout">
+            <div class="friends-search-panel">
+                <h3>Find Players</h3>
+                <div class="form-group">
+                    <input type="text" id="friendSearchInput" placeholder="Search username…" oninput="searchPlayers()">
                 </div>
+                <div id="playerSearchResults" class="player-results"></div>
+            </div>
+            <div class="friends-main">
+                <div class="friends-tabs">
+                    <button class="tab-btn active" onclick="switchFriendTab('friends', this)">Friends</button>
+                    <button class="tab-btn" onclick="switchFriendTab('requests', this)">
+                        Requests <span id="reqCount" class="badge" style="display:none"></span>
+                    </button>
+                    <button class="tab-btn" onclick="switchFriendTab('blocked', this)">Blocked</button>
+                </div>
+                <div id="friendsTab" class="friends-list"></div>
+                <div id="requestsTab" class="friends-list" style="display:none"></div>
+                <div id="blockedTab" class="friends-list" style="display:none"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── MESSAGES ─── -->
+    <section id="messages" class="section">
+        <div class="section-header">
+            <h2>📬 Messages</h2>
+        </div>
+        <div class="messages-layout">
+            <div class="compose-panel">
+                <h3>✉️ New Message</h3>
+                <div class="form-group">
+                    <label>To</label>
+                    <input type="text" id="msgTo" placeholder="Username…">
+                </div>
+                <div class="form-group">
+                    <label>Subject</label>
+                    <input type="text" id="msgSubject" placeholder="Subject…" maxlength="60">
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="msgBody" rows="5" maxlength="500" placeholder="Write here…"></textarea>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="sendMessage()">📤 Send</button>
+            </div>
+            <div class="inbox-panel">
+                <div class="inbox-tabs">
+                    <button class="tab-btn active" onclick="switchMsgTab('inbox', this)">📥 Inbox</button>
+                    <button class="tab-btn" onclick="switchMsgTab('sent', this)">📤 Sent</button>
+                </div>
+                <div id="inboxList" class="msg-list"></div>
+                <div id="sentList" class="msg-list" style="display:none"></div>
+            </div>
+        </div>
+        <div id="messageModal" class="modal" style="display:none">
+            <div class="modal-box">
+                <button class="modal-close" onclick="closeMessageModal()">✕</button>
+                <div class="modal-meta">
+                    <span id="modalFrom"></span>
+                    <span id="modalDate"></span>
+                </div>
+                <h3 id="modalSubject"></h3>
+                <p id="modalBody"></p>
+                <button class="btn btn-outline" style="margin-top:1rem" onclick="replyToMessage()">↩ Reply</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── PROFILE ─── -->
+    <section id="profile" class="section">
+        <div class="profile-wrap">
+            <div class="profile-card">
+                <div class="profile-av-stage" id="profileAvStage"></div>
+                <div class="profile-name" id="profileUsername"></div>
+                <div class="profile-badge-row" id="profileBadges"></div>
+            </div>
+            <div class="profile-details">
+                <div class="detail-row"><span class="detail-label">Username</span><span id="pUsername"></span></div>
+                <div class="detail-row"><span class="detail-label">Email</span><span id="pEmail"></span></div>
+                <div class="detail-row"><span class="detail-label">Joined</span><span id="pJoined"></span></div>
+                <div class="detail-row"><span class="detail-label">Friends</span><span id="pFriends"></span></div>
+                <div class="detail-row"><span class="detail-label">Games Played</span><span id="pGamesPlayed"></span></div>
+                <div class="detail-row"><span class="detail-label">Worlds Built</span><span id="pWorldsBuilt"></span></div>
                 <div class="profile-actions">
-                    <button onclick="showSection('customize')" class="btn btn-primary">🎨 Edit Avatar</button>
-                    <button onclick="handleLogout()" class="btn btn-logout">Logout</button>
+                    <button class="btn btn-outline" onclick="showSection('customize')">🎨 Edit Avatar</button>
+                    <button class="btn btn-outline" onclick="showSection('friends')">👥 Friends</button>
+                    <button class="btn btn-danger" onclick="handleLogout()">Sign Out</button>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-    </main>
+</main>
 
-    <!-- Toast Message -->
-    <div id="message" class="message"></div>
+<!-- Toast -->
+<div id="toast" class="toast"></div>
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
