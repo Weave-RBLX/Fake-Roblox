@@ -17,23 +17,22 @@ class PasswordManager {
 }
 
 // ============================================
-// USER MANAGER: Single Account Only
+// USER MANAGER: Multiple Accounts (2 min cooldown per device)
 // ============================================
-class SingleUserManager {
+class MultiUserManager {
     constructor() {
-        this.user = this.loadUser();
+        this.users = this.loadUsers();
         this.currentUser = this.loadCurrentUser();
+        this.lastAccountCreationTime = this.loadLastCreationTime();
     }
 
-    loadUser() {
-        const stored = localStorage.getItem('robloxUser');
-        return stored ? JSON.parse(stored) : null;
+    loadUsers() {
+        const stored = localStorage.getItem('robloxUsers');
+        return stored ? JSON.parse(stored) : [];
     }
 
-    saveUser() {
-        if (this.user) {
-            localStorage.setItem('robloxUser', JSON.stringify(this.user));
-        }
+    saveUsers() {
+        localStorage.setItem('robloxUsers', JSON.stringify(this.users));
     }
 
     loadCurrentUser() {
@@ -49,12 +48,37 @@ class SingleUserManager {
         }
     }
 
+    loadLastCreationTime() {
+        const stored = localStorage.getItem('robloxLastCreationTime');
+        return stored ? parseInt(stored) : 0;
+    }
+
+    saveLastCreationTime() {
+        localStorage.setItem('robloxLastCreationTime', Date.now().toString());
+    }
+
+    canCreateAccount() {
+        const now = Date.now();
+        const cooldownMs = 2 * 60 * 1000; // 2 minutes
+        const timeSinceLastCreation = now - this.lastAccountCreationTime;
+        return timeSinceLastCreation >= cooldownMs;
+    }
+
+    getTimeUntilNextAccount() {
+        const now = Date.now();
+        const cooldownMs = 2 * 60 * 1000; // 2 minutes
+        const timeSinceLastCreation = now - this.lastAccountCreationTime;
+        const timeRemaining = cooldownMs - timeSinceLastCreation;
+        return Math.ceil(timeRemaining / 1000); // Return in seconds
+    }
+
     async registerUser(username, email, password) {
-        // ONLY ONE ACCOUNT ALLOWED
-        if (this.user) {
+        // Check if enough time has passed since last account creation
+        if (!this.canCreateAccount() && this.lastAccountCreationTime > 0) {
+            const timeLeft = this.getTimeUntilNextAccount();
             return { 
                 success: false, 
-                message: '❌ An account already exists! Only one account per device is allowed.' 
+                message: `⏱️ You can create a new account in ${timeLeft} seconds. (2 minute cooldown per device)` 
             };
         }
 
@@ -63,6 +87,22 @@ class SingleUserManager {
             return { 
                 success: false, 
                 message: '❌ Username must be at least 3 characters!' 
+            };
+        }
+
+        // Check if username already exists
+        if (this.users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+            return { 
+                success: false, 
+                message: '❌ Username already taken! Choose a different one.' 
+            };
+        }
+
+        // Check if email already exists
+        if (this.users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+            return { 
+                success: false, 
+                message: '❌ Email already registered! Use a different email.' 
             };
         }
 
@@ -89,7 +129,7 @@ class SingleUserManager {
             const hashedPassword = await PasswordManager.hashPasswordWithSalt(password, salt);
 
             // Create user object with security features
-            this.user = {
+            const newUser = {
                 id: Date.now(),
                 username,
                 email,
@@ -102,7 +142,10 @@ class SingleUserManager {
                 lockTime: null
             };
 
-            this.saveUser();
+            this.users.push(newUser);
+            this.saveUsers();
+            this.saveLastCreationTime();
+
             return { 
                 success: true, 
                 message: '✅ Account created successfully! Please log in.' 
@@ -116,17 +159,19 @@ class SingleUserManager {
     }
 
     async loginUser(username, password) {
-        // Check if account exists
-        if (!this.user) {
+        // Find user
+        const user = this.users.find(u => u.username.toLowerCase() === username.toLowerCase());
+        
+        if (!user) {
             return { 
                 success: false, 
-                message: '❌ No account found. Please create an account first.' 
+                message: '❌ No account found with that username!' 
             };
         }
 
         // BRUTE FORCE PROTECTION: Check if account is locked
-        if (this.user.locked) {
-            const lockTime = new Date(this.user.lockTime);
+        if (user.locked) {
+            const lockTime = new Date(user.lockTime);
             const now = new Date();
             const lockDuration = 15 * 60 * 1000; // 15 minutes
 
@@ -138,69 +183,48 @@ class SingleUserManager {
                 };
             } else {
                 // Unlock after 15 minutes
-                this.user.locked = false;
-                this.user.loginAttempts = 0;
-                this.saveUser();
+                user.locked = false;
+                user.loginAttempts = 0;
+                this.saveUsers();
             }
-        }
-
-        // Check username
-        if (this.user.username.toLowerCase() !== username.toLowerCase()) {
-            this.user.loginAttempts = (this.user.loginAttempts || 0) + 1;
-            
-            if (this.user.loginAttempts >= 5) {
-                this.user.locked = true;
-                this.user.lockTime = new Date().toISOString();
-                this.saveUser();
-                return { 
-                    success: false, 
-                    message: '🔒 Too many failed attempts. Account locked for 15 minutes.' 
-                };
-            }
-
-            this.saveUser();
-            const attemptsLeft = 5 - this.user.loginAttempts;
-            return { 
-                success: false, 
-                message: `❌ Invalid username or password! (${attemptsLeft} attempts left)` 
-            };
         }
 
         // Verify password using hashed comparison
         try {
-            const hashedInput = await PasswordManager.hashPasswordWithSalt(password, this.user.salt);
+            const hashedInput = await PasswordManager.hashPasswordWithSalt(password, user.salt);
             
-            if (hashedInput !== this.user.passwordHash) {
-                this.user.loginAttempts = (this.user.loginAttempts || 0) + 1;
+            if (hashedInput !== user.passwordHash) {
+                user.loginAttempts = (user.loginAttempts || 0) + 1;
                 
-                if (this.user.loginAttempts >= 5) {
-                    this.user.locked = true;
-                    this.user.lockTime = new Date().toISOString();
-                    this.saveUser();
+                if (user.loginAttempts >= 5) {
+                    user.locked = true;
+                    user.lockTime = new Date().toISOString();
+                    this.saveUsers();
                     return { 
                         success: false, 
                         message: '🔒 Too many failed attempts. Account locked for 15 minutes.' 
                     };
                 }
 
-                this.saveUser();
-                const attemptsLeft = 5 - this.user.loginAttempts;
+                this.saveUsers();
+                const attemptsLeft = 5 - user.loginAttempts;
                 return { 
                     success: false, 
-                    message: `❌ Invalid username or password! (${attemptsLeft} attempts left)` 
+                    message: `❌ Invalid password! (${attemptsLeft} attempts left)` 
                 };
             }
 
             // Successful login - reset attempts and update last login
-            this.user.loginAttempts = 0;
-            this.user.lastLogin = new Date().toISOString();
-            this.saveUser();
+            user.loginAttempts = 0;
+            user.lastLogin = new Date().toISOString();
+            this.saveUsers();
 
             // Create session
             this.currentUser = {
-                username: this.user.username,
-                email: this.user.email,
-                createdAt: this.user.createdAt
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                createdAt: user.createdAt
             };
 
             this.saveCurrentUser();
@@ -229,13 +253,13 @@ class SingleUserManager {
         return this.currentUser !== null;
     }
 
-    userExists() {
-        return this.user !== null;
+    getUserByUsername(username) {
+        return this.users.find(u => u.username.toLowerCase() === username.toLowerCase());
     }
 }
 
 // Initialize User Manager
-const userManager = new SingleUserManager();
+const userManager = new MultiUserManager();
 
 // Game data
 const games = [
